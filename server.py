@@ -1,37 +1,40 @@
+#!usr/bin/env python3.6
+
+from urllib.request import urlopen as uReq
+from bs4 import BeautifulSoup as soup
 from selenium import webdriver
-# from selenium.webdriver.common.keys import Keys
 import time
-# from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-# import beautifulsoup4 as BeautifulSoup
-# from bs4 import BeautifulSoup
+
+
 
 def init_driver():
-    # driver = webdriver.Firefox()
     driver = webdriver.Chrome('chromedriver')
     
     driver.wait = WebDriverWait(driver, 5)
     return driver
  
- 
 def lookup(driver):
-    driver.get("http://127.0.0.1:3002/")
+    driver.get("http://www.bbc.co.uk/sport/football/scores-fixtures")
     try:
         home=driver.wait.until(EC.presence_of_element_located(
-            (By.CLASS_NAME, "team")
-        
+            (By.CLASS_NAME, "gs-u-vh")
         ))
-        # soup=BeautifulSoup(driver.page_source)
-        # soup= BeautifulSoup(driver.page_source, "html.parser")
+        page_soup = soup(home,"html.parser")
 
-        # print('<><><><><>><>hurray<><><><><><>')
-        # print(soup.find_all("div",class_='content'))
-        # print(soup.find_all("div", data_type="container"))
-        # for div in soup.find_all(class_='content'):
-        #     print link.get('href',None),link.get_text()
+        li=page_soup.findAll("li",{"class":"gs-u-pb-"})
+
+        matches_list=[]
+        for match in li:
+            col=match.findAll("span",{"class":"gs-u-display-none"})
+            matchDict={"home":col[0].text,"away":col[1].text}
+            matches_list.append(matchDict)
+
+        print(matches_list)
+
     except TimeoutException:
         print("page not loaded")
 if __name__ == "__main__":
