@@ -9,8 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-
-
 def init_driver():
     driver = webdriver.Chrome('chromedriver')
     
@@ -19,46 +17,35 @@ def init_driver():
  
 def lookup(driver):
     driver.get("http://www.bbc.co.uk/sport/football/scores-fixtures")
-
-    # html = driver.page_source
-
-    # page_soup = soup(html,"html.parser")
-
-    # li=page_soup.findAll("li",{"class":"gs-u-pb-"})
-
-    # matches_list=[]
-    # for match in li:
-    #     col=match.findAll("span",{"class":"gs-u-display-none"})
-    #     matchDict={"home":col[0].text,"away":col[1].text}
-    #     matches_list.append(matchDict)
-
-    # print(matches_list)
-
-
     try:
         home=driver.wait.until(EC.presence_of_element_located(
             (By.CLASS_NAME, "orb-nav-section")
         ))
 
-        html = driver.page_source
 
-        page_soup = soup(html,"html.parser")
+        n=10
+        while n > 1:
+            print('we are live')
+            n-=1
+            html = driver.page_source
+            page_soup = soup(html,"html.parser")
 
-        li=page_soup.findAll("li",{"class":"gs-u-pb-"})
+            li=page_soup.findAll("li",{"class":"gs-u-pb-"})
 
-        matches_list=[]
-        for match in range(10):
-            col = li[match].findAll("span",{"class":"gs-u-display-none"})
-            masaa = li[match].findAll("span", {"class":"sp-c-fixture__status"})
-            print(masaa[0].text)
-            if masaa[0].text:
-                rem = masaa[0].text
-            else:
-                rem = "not started"
-            matchDict = { "home": col[0].text, "away": col[1].text,"time":rem }
-            matches_list.append(matchDict)
+            matches_list=[]
+            for match in range(10):
+                col = li[match].findAll("span",{"class":"gs-u-display-none"})
+                masaa = li[match].findAll("span", {"class":"sp-c-fixture__status"})
+                print(masaa[0].text)
+                if masaa[0].text:
+                    rem = masaa[0].text
+                else:
+                    rem = "not started"
+                matchDict = { "home": col[0].text, "away": col[1].text,"time":rem }
+                matches_list.append(matchDict)
 
-        print(matches_list)
+            # print(matches_list)
+            time.sleep(3)
 
     except TimeoutException:
         print("page not loaded")
@@ -67,5 +54,5 @@ def lookup(driver):
 if __name__ == "__main__":
     driver = init_driver()
     lookup(driver)
-    time.sleep(5)
+    time.sleep(6)
     driver.quit()
