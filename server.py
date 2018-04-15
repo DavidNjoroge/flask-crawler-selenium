@@ -42,8 +42,14 @@ def lookup(driver):
         print("shit happened",Exception)
         driver.quit()
         
-if __name__ == "__main__":
+# if __name__ == "__main__":
+#     driver = init_driver()
+#     lookup(driver)
+#     # time.sleep(6)
+#     driver.quit()
+
+def request():
     driver = init_driver()
-    lookup(driver)
-    # time.sleep(6)
+    returned = lookup(driver)
     driver.quit()
+    return returned
