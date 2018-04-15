@@ -1,4 +1,4 @@
-#!usr/bin/env python3.6
+#!/usr/bin/env python3.6
 
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+
+from crawlers import all_games,check_games
 
 def init_driver():
     driver = webdriver.Chrome('chromedriver')
@@ -21,38 +23,27 @@ def lookup(driver):
         home=driver.wait.until(EC.presence_of_element_located(
             (By.CLASS_NAME, "orb-nav-section")
         ))
+        status=True
+        
+        html = driver.page_source
+        page_soup = soup(html,"html.parser")
+        all_games_dict = all_games(page_soup)
+        return all_games_dict
+        # for i in range(6):
+        # while status:
+        #     time.sleep(60)
+        #     html = driver.page_source
+        #     page_soup = soup(html,"html.parser")
+        #     status,games=check_games(all_games_dict,page_soup)
+        #     print(status,len(games))
+        # print(all_games_dict)
 
-
-        n=10
-        while n > 1:
-            print('we are live')
-            n-=1
-            html = driver.page_source
-            page_soup = soup(html,"html.parser")
-
-            li=page_soup.findAll("li",{"class":"gs-u-pb-"})
-
-            matches_list=[]
-            for match in range(10):
-                col = li[match].findAll("span",{"class":"gs-u-display-none"})
-                masaa = li[match].findAll("span", {"class":"sp-c-fixture__status"})
-                print(masaa[0].text)
-                if masaa[0].text:
-                    rem = masaa[0].text
-                else:
-                    rem = "not started"
-                matchDict = { "home": col[0].text, "away": col[1].text,"time":rem }
-                matches_list.append(matchDict)
-
-            # print(matches_list)
-            time.sleep(3)
-
-    except TimeoutException:
-        print("page not loaded")
+    except Exception:
+        print("shit happened",Exception)
         driver.quit()
         
 if __name__ == "__main__":
     driver = init_driver()
     lookup(driver)
-    time.sleep(6)
+    # time.sleep(6)
     driver.quit()
